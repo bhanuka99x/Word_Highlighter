@@ -1,22 +1,24 @@
-const input = document.getElementById("wordInput");
-const addBtn = document.getElementById("addBtn");
-const list = document.getElementById("wordList");
+const clearBtn = document.getElementById("clearBtn");
+const wordList = document.getElementById("wordList");
 
-
-
-addBtn.addEventListener('click', () => {
-    const word = input.value.trim();
-    if (!word) return;
-    chrome.storage.sync.get(['words'], (data) => {
-        const words = data.words || [];
-        if (!words.includes(word)) {
-            words.push(word);
-            chrome.storage.sync.set({ words }, () => {
-                render(words);
-                input.value = '';
-            });
-        }
+// Render saved words
+function renderWords() {
+  chrome.storage.local.get({ words: [] }, (data) => {
+    wordList.innerHTML = "";
+    data.words.forEach((word) => {
+      const li = document.createElement("li");
+      li.textContent = word;
+      wordList.appendChild(li);
     });
+  });
+}
+
+// Clear all words
+clearBtn.addEventListener("click", () => {
+  chrome.storage.local.set({ words: [] }, () => {
+    renderWords();
+  });
 });
 
-chrome.storage.sync.get(['words'], (data) => render(data.words || []));
+
+document.addEventListener("DOMContentLoaded", renderWords);
