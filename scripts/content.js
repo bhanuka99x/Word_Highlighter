@@ -1,46 +1,62 @@
-// Function to escape special regex characters
 function escapeRegex(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-// Highlight saved words
 function highlightWords(words) {
   if (!words || words.length === 0) return;
 
-  const walk = document.createTreeWalker(
-    document.body,
-    NodeFilter.SHOW_TEXT,
-    null,
-    false
+  const regex = new RegExp(
+    "\\b(" + words.map(escapeRegex).join("|") + ")\\b",
+    "gi"
   );
 
-  let node;
-  while ((node = walk.nextNode())) {
-    // Skip nodes inside script, style, textarea, input
+  function walk(node) {
+    // Skip these elements
     if (
-      node.parentNode &&
-      ["SCRIPT", "STYLE", "TEXTAREA", "INPUT"].includes(node.parentNode.tagName)
-    )
-      continue;
+      node.nodeType === Node.ELEMENT_NODE &&
+      ["SCRIPT", "STYLE", "TEXTAREA", "INPUT"].includes(node.tagName)
+    ) {
+      return;
+    }
 
-    let replaced = node.nodeValue;
-    words.forEach((word) => {
-      const regex = new RegExp(`\\b${escapeRegex(word)}\\b`, "gi");
-      replaced = replaced.replace(
-        regex,
-        `<span style="background-color: yellow; color: black;">$&</span>`
-      );
-    });
+    if (node.nodeType === Node.TEXT_NODE) {
+      const text = node.nodeValue;
+      if (regex.test(text)) {
+        const fragment = document.createDocumentFragment();
+        let lastIndex = 0;
 
-    if (replaced !== node.nodeValue) {
-      const span = document.createElement("span");
-      span.innerHTML = replaced;
-      node.parentNode.replaceChild(span, node);
+        text.replace(regex, (match, _p1, offset) => {
+          if (offset > lastIndex) {
+            fragment.appendChild(
+              document.createTextNode(text.slice(lastIndex, offset))
+            );
+          }
+
+          const highlight = document.createElement("span");
+          highlight.textContent = match;
+          highlight.style.backgroundColor = "yellow";
+          highlight.style.color = "black";
+          fragment.appendChild(highlight);
+
+          lastIndex = offset + match.length;
+        });
+
+        if (lastIndex < text.length) {
+          fragment.appendChild(document.createTextNode(text.slice(lastIndex)));
+        }
+
+        node.parentNode.replaceChild(fragment, node);
+      }
+    } else {
+      // Recurse through child nodes
+      node.childNodes.forEach(walk);
     }
   }
+
+  walk(document.body);
 }
 
-// Get saved words and highlight
+// Load words and run highlight
 chrome.storage.local.get({ words: [] }, (data) => {
   highlightWords(data.words);
 });

@@ -3,7 +3,7 @@
   "name": "Word Highlighter",
   "version": "1.0",
   "description": "Highlight saved words across websites.",
-  "permissions": ["storage", "scripting", "activeTab","contextMenus"],
+  "permissions": ["storage", "scripting", "activeTab", "contextMenus"],
   "action": {
     "default_popup": "popup/popup.html",
     "default_icon": {
@@ -20,7 +20,8 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["scripts/content.js"]
+      "js": ["scripts/content.js"],
+      "run_at": "document_idle"
     }
   ]
 }
