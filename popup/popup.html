@@ -1,25 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Word Highlighter</title>
-<link href="../src/output.css" rel="stylesheet">
-</head>
-<body class="p-3 w-72 bg-white text-gray-800">
-<h1 class="text-lg font-semibold mb-3 text-center">Word Highlighter</h1>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Word Highlighter</title>
+    <link href="../src/output.css" rel="stylesheet" />
+  </head>
+  <body class="p-3 w-72 bg-white text-gray-800">
+    <h1 class="text-lg font-semibold mb-3 text-center">Word Highlighter</h1>
+    <h2 class="text-sm font-medium">Saved words</h2>
+    <ul id="wordList" class="mt-2 space-y-1 max-h-40 overflow-auto"></ul>
+    <button id="clearBtn" class="mt-4 p-2 border bg-amber-500 text-black rounded">
+      Clear All
+    </button>
 
-
-<div class="mb-2">
-<input id="wordInput" type="text" placeholder="Enter word" class="w-full border rounded px-2 py-1" />
-<button id="addBtn" class="mt-2 w-full bg-blue-600 text-white rounded py-1">Add Word</button>
-</div>
-
-
-<h2 class="text-sm font-medium">Saved words</h2>
-<ul id="wordList" class="mt-2 space-y-1 max-h-40 overflow-auto"></ul>
-
-
-<script src="popup.js"></script>
-</body>
+    <script src="popup.js"></script>
+  </body>
 </html>
